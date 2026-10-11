@@ -1,0 +1,1229 @@
+/* ==========================================================================
+   SMART HOSPITAL RESOURCE MANAGEMENT SYSTEM - COMPLETE SOURCE CODE
+   ========================================================================== */
+
+/* FILE 1: index.html */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hospital OS - Emergency & Resource Management Simulator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navbar -->
+        <header class="navbar">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-hospital-user"></i></div>
+                <div class="logo-text">
+                    <h1>Smart Hospital <span class="badge-os">OS Engine v2.5</span></h1>
+                    <p>Operating Systems Lab Mini Project • Integrated Multi-Concept Simulator</p>
+                </div>
+            </div>
+
+            <!-- Global Simulation Control Panel -->
+            <div class="controls-bar">
+                <div class="sim-status">
+                    <span class="status-indicator" id="status-indicator"></span>
+                    <span id="status-text">PAUSED</span>
+                    <span class="clock-display"><i class="fa-regular fa-clock"></i> Tick: <span id="tick-counter">0</span>s</span>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-play" class="btn btn-primary" title="Start / Resume Simulation"><i class="fa-solid fa-play"></i> Run</button>
+                    <button id="btn-pause" class="btn btn-secondary" title="Pause Simulation" disabled><i class="fa-solid fa-pause"></i> Pause</button>
+                    <button id="btn-step" class="btn btn-outline" title="Execute Next Clock Tick"><i class="fa-solid fa-step-forward"></i> Step</button>
+                    <button id="btn-reset" class="btn btn-danger" title="Reset Simulation State"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="speed-range"><i class="fa-solid fa-gauge-high"></i> Speed:</label>
+                    <input type="range" id="speed-range" min="200" max="2000" step="100" value="800">
+                    <span id="speed-val">0.8s/tick</span>
+                </div>
+
+                <div class="preset-selector">
+                    <select id="preset-select" class="form-select">
+                        <option value="default">📌 Preset: Balanced ER Load</option>
+                        <option value="mass_casualty">🚨 Scenario 1: Mass Casualty (Priority Preemption)</option>
+                        <option value="deadlock_risk">⚠️ Scenario 2: Resource Contention (Deadlock Risk)</option>
+                        <option value="memory_stress">💾 Scenario 3: Heavy Paging & Memory Pressure</option>
+                    </select>
+                </div>
+
+                <button id="btn-add-patient" class="btn btn-accent"><i class="fa-solid fa-user-plus"></i> New Patient</button>
+            </div>
+        </header>
+
+        <!-- OS Concepts Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="tab-scheduling">
+                <i class="fa-solid fa-microchip"></i> 1. CPU & Priority Scheduling
+            </button>
+            <button class="tab-btn" data-tab="tab-deadlock">
+                <i class="fa-solid fa-shield-halved"></i> 2. Banker's & Deadlock RAG
+            </button>
+            <button class="tab-btn" data-tab="tab-sync">
+                <i class="fa-solid fa-lock"></i> 3. Thread Synchronization & Locks
+            </button>
+            <button class="tab-btn" data-tab="tab-memory">
+                <i class="fa-solid fa-memory"></i> 4. Memory Partitioning & Paging
+            </button>
+            <button class="tab-btn" data-tab="tab-analytics">
+                <i class="fa-solid fa-chart-line"></i> 5. Performance Analytics
+            </button>
+        </nav>
+
+        <!-- Main Workspace Viewports -->
+        <main class="main-content">
+            <!-- TAB 1: CPU & PRIORITY SCHEDULING -->
+            <section id="tab-scheduling" class="tab-page active">
+                <div class="grid-2col">
+                    <!-- Left: Process Queue & PCB Monitor -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Patient Triage / Process Queue</h3>
+                            <div class="scheduler-algorithm-select">
+                                <label for="algo-select">Algorithm:</label>
+                                <select id="algo-select" class="form-select-sm">
+                                    <option value="priority_p" selected>Preemptive Priority (ER Triage)</option>
+                                    <option value="rr">Round Robin (Time Quantum = 2s)</option>
+                                    <option value="sjf">Shortest Job First (SJF)</option>
+                                    <option value="fcfs">First-Come, First-Served (FCFS)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table" id="pcb-table">
+                                    <thead>
+                                        <tr>
+                                            <th>PID</th>
+                                            <th>Patient Name</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>State</th>
+                                            <th>Burst (s)</th>
+                                            <th>Remaining</th>
+                                            <th>Mem (KB)</th>
+                                            <th>Resource Claim</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pcb-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: CPU Core Execution & Live State -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-stethoscope"></i> Operating Room CPU Core Monitor</h3>
+                            <span class="badge-active" id="aging-badge"><i class="fa-solid fa-clock-rotate-left"></i> Aging Active (Starvation Prevention)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="cpu-core-display">
+                                <div class="cpu-box">
+                                    <div class="cpu-title">Active OR Doctor / CPU Core</div>
+                                    <div class="cpu-content" id="cpu-current-process">
+                                        <span class="idle-text">IDLE - Ready Queue Empty</span>
+                                    </div>
+                                    <div class="cpu-metrics" id="cpu-live-metrics">
+                                        <span>Util: <strong id="cpu-util-val">0%</strong></span>
+                                        <span>Context Switches: <strong id="cpu-cs-val">0</strong></span>
+                                    </div>
+                                </div>
+
+                                <div class="process-state-diagram">
+                                    <h4>OS Process State Machine</h4>
+                                    <div class="states-flow">
+                                        <div class="state-node" id="state-new">NEW <span class="count" id="cnt-new">0</span></div>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <div class="state-node" id="state-ready">READY <span class="count" id="cnt-ready">0</span></div>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <div class="state-node running" id="state-running">RUNNING <span class="count" id="cnt-running">0</span></div>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <div class="state-node" id="state-terminated">DONE <span class="count" id="cnt-terminated">0</span></div>
+                                    </div>
+                                    <div class="waiting-state-sub" id="state-waiting">
+                                        <i class="fa-solid fa-hourglass-half"></i> BLOCKED / WAITING (Resource Lock): <span class="count" id="cnt-waiting">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Timeline Gantt Chart -->
+                <div class="card margin-top">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-gantt"></i> Dynamic Execution Gantt Chart Timeline</h3>
+                        <div class="gantt-legend">
+                            <span class="legend-item P1"><span class="dot"></span> P1: Emergency Trauma</span>
+                            <span class="legend-item P2"><span class="dot"></span> P2: Urgent Surgery</span>
+                            <span class="legend-item P3"><span class="dot"></span> P3: General OPD</span>
+                            <span class="legend-item P4"><span class="dot"></span> P4: Routine Checkup</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="gantt-container" id="gantt-timeline">
+                            <div class="gantt-empty">No simulation ticks recorded yet. Click "Run" or "Step" to begin.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: BANKER'S ALGORITHM & DEADLOCK RAG GRAPH -->
+            <section id="tab-deadlock" class="tab-page">
+                <div class="grid-2col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-calculator"></i> Banker's Algorithm - Resource Matrices</h3>
+                            <button id="btn-check-safety" class="btn btn-secondary btn-sm"><i class="fa-solid fa-check-double"></i> Check Safe State</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="banker-matrices">
+                                <div class="matrix-box">
+                                    <h4>Available Resources</h4>
+                                    <div class="res-counters" id="banker-available-res"></div>
+                                </div>
+
+                                <div class="matrix-tables-grid">
+                                    <div class="matrix-sub">
+                                        <h4>Allocation Matrix</h4>
+                                        <div id="matrix-allocation-container"></div>
+                                    </div>
+                                    <div class="matrix-sub">
+                                        <h4>Max Claim Matrix</h4>
+                                        <div id="matrix-max-container"></div>
+                                    </div>
+                                    <div class="matrix-sub">
+                                        <h4>Need Matrix (Max - Alloc)</h4>
+                                        <div id="matrix-need-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="safety-result-panel" id="safety-result">
+                                <div class="alert alert-info">
+                                    <i class="fa-solid fa-circle-info"></i> Click <strong>"Check Safe State"</strong> or request resources to run the Banker's Safety Verification.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-diagram-project"></i> Interactive Resource Allocation Graph (RAG)</h3>
+                            <button id="btn-detect-deadlock" class="btn btn-danger btn-sm"><i class="fa-solid fa-triangle-exclamation"></i> Detect Cycle</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="rag-canvas-wrapper">
+                                <canvas id="rag-canvas" width="550" height="380"></canvas>
+                                <div class="rag-legend">
+                                    <span><i class="fa-solid fa-circle node-proc"></i> Process (Patient)</span>
+                                    <span><i class="fa-solid fa-square node-res"></i> Resource (Equipment)</span>
+                                    <span><i class="fa-solid fa-arrow-right edge-alloc"></i> Allocation (Held)</span>
+                                    <span><i class="fa-solid fa-arrow-right edge-req"></i> Request (Wait)</span>
+                                </div>
+                            </div>
+                            <div id="rag-detection-banner" class="rag-banner">
+                                <span id="rag-status-text">Status: Normal - No Deadlock Cycles Detected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: THREAD SYNCHRONIZATION & MUTEX LOCKS -->
+            <section id="tab-sync" class="tab-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-lock"></i> Critical Section & Semaphore / Mutex Monitor</h3>
+                        <p class="subtitle">Ensures exclusive access to shared medical units (ICU, Ventilator, MRI, Surgery Suite) to avoid race conditions.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="resources-sync-grid" id="sync-resources-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: MEMORY MANAGEMENT & PAGING -->
+            <section id="tab-memory" class="tab-page">
+                <div class="grid-2col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-hard-drive"></i> Main Memory Partitioning</h3>
+                            <div class="fit-algorithm-select">
+                                <label for="mem-algo-select">Policy:</label>
+                                <select id="mem-algo-select" class="form-select-sm">
+                                    <option value="first_fit" selected>First-Fit</option>
+                                    <option value="best_fit">Best-Fit</option>
+                                    <option value="worst_fit">Worst-Fit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="memory-stats-summary">
+                                <span>Total Memory: <strong>1024 KB</strong></span>
+                                <span>Used: <strong id="mem-used-val">0 KB</strong></span>
+                                <span>Free: <strong id="mem-free-val">1024 KB</strong></span>
+                                <span>Ext. Fragmentation: <strong id="mem-frag-val">0 KB</strong></span>
+                            </div>
+
+                            <div class="memory-visualizer" id="memory-map-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-layer-group"></i> Virtual Memory Page Table & LRU / FIFO Simulation</h3>
+                            <div class="page-algo-select">
+                                <label for="page-algo-select">Page Replacement:</label>
+                                <select id="page-algo-select" class="form-select-sm">
+                                    <option value="lru" selected>LRU (Least Recently Used)</option>
+                                    <option value="fifo">FIFO (First-In, First-Out)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="paging-stats">
+                                <span class="badge-metric"><i class="fa-solid fa-circle-check"></i> Page Hits: <strong id="page-hits-val">0</strong></span>
+                                <span class="badge-metric danger"><i class="fa-solid fa-circle-xmark"></i> Page Faults: <strong id="page-faults-val">0</strong></span>
+                                <span class="badge-metric info">Hit Ratio: <strong id="page-ratio-val">100%</strong></span>
+                            </div>
+
+                            <div class="page-frames-wrapper">
+                                <h4>Physical Page Frames (4 Frames Available)</h4>
+                                <div class="page-frames-grid" id="page-frames-container"></div>
+                            </div>
+
+                            <div class="page-request-simulator margin-top">
+                                <h4>Simulate Patient Medical File Page Request</h4>
+                                <div class="input-group">
+                                    <input type="number" id="page-req-input" min="0" max="15" value="3" class="form-control-sm" placeholder="Page # (0-15)">
+                                    <button id="btn-request-page" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-export"></i> Access Page</button>
+                                </div>
+                                <div id="page-request-log" class="page-log-box">Log: Access records to see page hits and faults.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: ANALYTICS & OS COMPARATIVE METRICS -->
+            <section id="tab-analytics" class="tab-page">
+                <div class="grid-3col">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="stat-info">
+                            <h4>Avg Waiting Time</h4>
+                            <span class="stat-value" id="stat-avg-wait">0.00 s</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-right-left"></i></div>
+                        <div class="stat-info">
+                            <h4>Avg Turnaround Time</h4>
+                            <span class="stat-value" id="stat-avg-turnaround">0.00 s</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="stat-info">
+                            <h4>CPU Throughput</h4>
+                            <span class="stat-value" id="stat-throughput">0.00 proc/min</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card margin-top">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-square-poll-vertical"></i> Operating System Concept Audit & Assessment Table</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>OS Concept</th>
+                                    <th>Implementation Method</th>
+                                    <th>Hospital Real-World Mapping</th>
+                                    <th>Current Active Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>1. CPU & Priority Scheduling</strong></td>
+                                    <td>Preemptive Priority / RR / SJF with Context Switching</td>
+                                    <td>Emergency Triage (P1 Trauma vs P4 Routine)</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2. Process Management</strong></td>
+                                    <td>Process Control Block (PCB), State Transitions</td>
+                                    <td>Patient Treatment Lifecycle (Arrival to Discharge)</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>3. Thread Synchronization</strong></td>
+                                    <td>Mutex Locks & Counting Semaphores</td>
+                                    <td>Shared Medical Equipment (ICU, Surgery Suite, MRI)</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>4. Deadlock Management</strong></td>
+                                    <td>Banker's Safety Algorithm & RAG Cycle Detection</td>
+                                    <td>Preventing multi-equipment surgical deadlock</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>5. Memory & Paging</strong></td>
+                                    <td>First-Fit/Best-Fit Allocation & LRU/FIFO Paging</td>
+                                    <td>Patient Medical Files & Diagnostic Image Buffers</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Execution Log Streamer -->
+        <footer class="log-footer">
+            <div class="log-header">
+                <span><i class="fa-solid fa-terminal"></i> OS System Console Log</span>
+                <button id="btn-clear-log" class="btn-text-sm"><i class="fa-solid fa-trash"></i> Clear Log</button>
+            </div>
+            <div class="log-content" id="os-log-container">
+                <div class="log-entry system">[SYSTEM INITIALIZED] Smart Hospital OS Ready. Select an algorithm or press Run.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal: Add New Patient / Process -->
+    <div class="modal-overlay" id="add-patient-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> Register New Hospital Patient Process</h3>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <form id="add-patient-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="input-patient-name">Patient Name / Condition:</label>
+                        <input type="text" id="input-patient-name" class="form-control" placeholder="e.g. Cardiac Arrest Case" required>
+                    </div>
+
+                    <div class="grid-2col-compact">
+                        <div class="form-group">
+                            <label for="input-priority">Priority Level:</label>
+                            <select id="input-priority" class="form-control">
+                                <option value="1">P1 - Emergency Trauma (Highest)</option>
+                                <option value="2" selected>P2 - Urgent Surgery</option>
+                                <option value="3">P3 - General OPD Ward</option>
+                                <option value="4">P4 - Routine Checkup (Lowest)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-burst">Burst Time (seconds):</label>
+                            <input type="number" id="input-burst" min="1" max="20" value="4" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2col-compact">
+                        <div class="form-group">
+                            <label for="input-memory">Memory Needed (KB):</label>
+                            <input type="number" id="input-memory" min="32" max="256" step="16" value="128" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-resource">Primary Equipment Required:</label>
+                            <select id="input-resource" class="form-control">
+                                <option value="none">None (General Ward)</option>
+                                <option value="ICU">ICU Bed</option>
+                                <option value="Ventilator">Ventilator</option>
+                                <option value="MRI">MRI Scanner</option>
+                                <option value="OR">Surgery Room</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Process to Queue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Modules -->
+    <script src="js/process_manager.js"></script>
+    <script src="js/cpu_scheduler.js"></script>
+    <script src="js/banker_rag.js"></script>
+    <script src="js/synchronization.js"></script>
+    <script src="js/memory_manager.js"></script>
+    <script src="js/os_engine.js"></script>
+    <script src="js/ui_controller.js"></script>
+</body>
+</html>
+
+
+/* FILE 2: js/process_manager.js */
+class PCB {
+    constructor(pid, name, priority, burstTime, memoryRequired = 64, resourceClaim = 'none') {
+        this.pid = pid;
+        this.name = name;
+        this.priority = parseInt(priority);
+        this.burstTime = parseInt(burstTime);
+        this.remainingTime = parseInt(burstTime);
+        this.memoryRequired = parseInt(memoryRequired);
+        this.resourceClaim = resourceClaim;
+        this.state = 'NEW'; 
+        this.arrivalTime = 0;
+        this.startTime = -1;
+        this.completionTime = 0;
+        this.waitTime = 0;
+        this.turnaroundTime = 0;
+        this.age = 0;
+        this.color = this.assignColor(this.priority);
+    }
+
+    assignColor(prio) {
+        switch(prio) {
+            case 1: return '#ff4757';
+            case 2: return '#ffa502';
+            case 3: return '#00d2d3';
+            case 4: return '#2ed573';
+            default: return '#00f2fe';
+        }
+    }
+
+    getCategoryName() {
+        switch(this.priority) {
+            case 1: return 'Emergency Trauma';
+            case 2: return 'Urgent Surgery';
+            case 3: return 'General Ward';
+            case 4: return 'Routine Checkup';
+            default: return 'Standard Case';
+        }
+    }
+}
+
+class ProcessManager {
+    constructor() {
+        this.processes = [];
+        this.nextPidCounter = 101;
+    }
+
+    createProcess(name, priority, burstTime, memoryRequired, resourceClaim) {
+        const pid = `P${this.nextPidCounter++}`;
+        const proc = new PCB(pid, name, priority, burstTime, memoryRequired, resourceClaim);
+        this.processes.push(proc);
+        return proc;
+    }
+
+    getProcess(pid) {
+        return this.processes.find(p => p.pid === pid);
+    }
+
+    getAllProcesses() {
+        return this.processes;
+    }
+
+    getProcessesByState(state) {
+        return this.processes.filter(p => p.state === state);
+    }
+
+    resetAll() {
+        this.processes = [];
+        this.nextPidCounter = 101;
+    }
+}
+
+window.processManager = new ProcessManager();
+
+
+/* FILE 3: js/cpu_scheduler.js */
+class CPUScheduler {
+    constructor() {
+        this.algorithm = 'priority_p';
+        this.timeQuantum = 2;
+        this.rrTickCounter = 0;
+        this.runningProcess = null;
+        this.ganttHistory = [];
+        this.contextSwitches = 0;
+        this.totalBusyTicks = 0;
+    }
+
+    setAlgorithm(algo) {
+        this.algorithm = algo;
+        this.rrTickCounter = 0;
+    }
+
+    scheduleNext(currentTick, readyQueue, processManager) {
+        readyQueue.forEach(proc => {
+            proc.age++;
+            if (proc.age > 10 && proc.priority > 1) {
+                proc.effectivePriority = Math.max(1, proc.priority - 1);
+            } else {
+                proc.effectivePriority = proc.priority;
+            }
+        });
+
+        let selectedProc = null;
+
+        if (readyQueue.length > 0) {
+            if (this.algorithm === 'priority_p') {
+                readyQueue.sort((a, b) => {
+                    const prioA = a.effectivePriority !== undefined ? a.effectivePriority : a.priority;
+                    const priob = b.effectivePriority !== undefined ? b.effectivePriority : b.priority;
+                    if (prioA !== priob) return prioA - priob;
+                    return a.pid.localeCompare(b.pid);
+                });
+                selectedProc = readyQueue[0];
+
+            } else if (this.algorithm === 'sjf') {
+                readyQueue.sort((a, b) => a.remainingTime - b.remainingTime);
+                selectedProc = readyQueue[0];
+
+            } else if (this.algorithm === 'rr') {
+                if (this.runningProcess && readyQueue.includes(this.runningProcess) && this.rrTickCounter < this.timeQuantum) {
+                    selectedProc = this.runningProcess;
+                } else {
+                    this.rrTickCounter = 0;
+                    selectedProc = readyQueue[0];
+                }
+
+            } else if (this.algorithm === 'fcfs') {
+                readyQueue.sort((a, b) => a.arrivalTime - b.arrivalTime);
+                selectedProc = readyQueue[0];
+            }
+        }
+
+        if (selectedProc !== this.runningProcess) {
+            if (this.runningProcess && this.runningProcess.state === 'RUNNING') {
+                this.runningProcess.state = 'READY';
+                window.uiController.logSystem(`[PREEMPTION] Process ${this.runningProcess.pid} (${this.runningProcess.name}) preempted by ${selectedProc ? selectedProc.pid : 'IDLE'}`, 'preempt');
+            }
+
+            if (selectedProc) {
+                this.contextSwitches++;
+                this.rrTickCounter = 0;
+                selectedProc.state = 'RUNNING';
+                if (selectedProc.startTime === -1) {
+                    selectedProc.startTime = currentTick;
+                }
+                window.uiController.logSystem(`[CPU ALLOCATION] ${selectedProc.pid} (${selectedProc.name}) scheduled on CPU Core under ${this.algorithm.toUpperCase()}`, 'schedule');
+            }
+
+            this.runningProcess = selectedProc;
+        } else if (this.runningProcess) {
+            this.rrTickCounter++;
+        }
+
+        if (this.runningProcess) {
+            this.totalBusyTicks++;
+            this.runningProcess.remainingTime--;
+            this.runningProcess.age = 0;
+
+            this.recordGanttStep(currentTick, this.runningProcess);
+
+            if (this.runningProcess.remainingTime <= 0) {
+                this.runningProcess.state = 'TERMINATED';
+                this.runningProcess.completionTime = currentTick + 1;
+                this.runningProcess.turnaroundTime = this.runningProcess.completionTime - this.runningProcess.arrivalTime;
+                this.runningProcess.waitTime = this.runningProcess.turnaroundTime - this.runningProcess.burstTime;
+
+                window.uiController.logSystem(`[PROCESS DISCHARGED] ${this.runningProcess.pid} (${this.runningProcess.name}) completed treatment! Wait Time: ${this.runningProcess.waitTime}s, Turnaround: ${this.runningProcess.turnaroundTime}s`, 'system');
+
+                if (window.syncEngine) {
+                    window.syncEngine.releaseResourceByPID(this.runningProcess.pid);
+                }
+                if (window.memoryManager) {
+                    window.memoryManager.deallocateMemory(this.runningProcess.pid);
+                }
+
+                this.runningProcess = null;
+                this.rrTickCounter = 0;
+            }
+        } else {
+            this.recordGanttStep(currentTick, null);
+        }
+    }
+
+    recordGanttStep(tick, proc) {
+        const lastBlock = this.ganttHistory[this.ganttHistory.length - 1];
+        const pid = proc ? proc.pid : 'IDLE';
+        const color = proc ? proc.color : 'rgba(255,255,255,0.05)';
+        const priority = proc ? proc.priority : 0;
+        const name = proc ? proc.name : 'Idle';
+
+        if (lastBlock && lastBlock.pid === pid) {
+            lastBlock.endTick = tick + 1;
+            lastBlock.duration = lastBlock.endTick - lastBlock.startTick;
+        } else {
+            this.ganttHistory.push({
+                pid: pid,
+                name: name,
+                priority: priority,
+                color: color,
+                startTick: tick,
+                endTick: tick + 1,
+                duration: 1
+            });
+        }
+    }
+
+    reset() {
+        this.runningProcess = null;
+        this.ganttHistory = [];
+        this.contextSwitches = 0;
+        this.totalBusyTicks = 0;
+        this.rrTickCounter = 0;
+    }
+}
+
+window.cpuScheduler = new CPUScheduler();
+
+
+/* FILE 4: js/banker_rag.js */
+class BankerAndRAG {
+    constructor() {
+        this.resources = {
+            'ICU': { total: 3, available: 3 },
+            'Ventilator': { total: 2, available: 2 },
+            'MRI': { total: 2, available: 2 },
+            'OR': { total: 2, available: 2 }
+        };
+        this.resourceKeys = Object.keys(this.resources);
+        this.lastSafetyResult = null;
+    }
+
+    checkSafetyState(processes) {
+        const activeProcs = processes.filter(p => p.state !== 'TERMINATED');
+        const numProcs = activeProcs.length;
+        if (numProcs === 0) {
+            return { safe: true, sequence: [], message: 'System is SAFE (No active processes)' };
+        }
+
+        const work = {};
+        this.resourceKeys.forEach(res => {
+            work[res] = this.resources[res].available;
+        });
+
+        const finish = new Array(numProcs).fill(false);
+        const safeSeq = [];
+
+        let count = 0;
+        let progress = true;
+
+        while (count < numProcs && progress) {
+            progress = false;
+            for (let i = 0; i < numProcs; i++) {
+                if (!finish[i]) {
+                    const proc = activeProcs[i];
+                    const need = this.getProcessNeed(proc);
+                    
+                    let canExecute = true;
+                    for (const res of this.resourceKeys) {
+                        if ((need[res] || 0) > work[res]) {
+                            canExecute = false;
+                            break;
+                        }
+                    }
+
+                    if (canExecute) {
+                        const alloc = this.getProcessAllocation(proc);
+                        for (const res of this.resourceKeys) {
+                            work[res] += (alloc[res] || 0);
+                        }
+                        finish[i] = true;
+                        safeSeq.push(proc.pid);
+                        progress = true;
+                        count++;
+                    }
+                }
+            }
+        }
+
+        if (count === numProcs) {
+            this.lastSafetyResult = {
+                safe: true,
+                sequence: safeSeq,
+                message: `System is in a SAFE State! Safe Execution Sequence: ${safeSeq.join(' -> ')}`
+            };
+        } else {
+            this.lastSafetyResult = {
+                safe: false,
+                sequence: [],
+                message: `UNSAFE STATE / DEADLOCK RISK! Resource contention preventing safe sequence.`
+            };
+        }
+
+        return this.lastSafetyResult;
+    }
+
+    getProcessAllocation(proc) {
+        const alloc = { ICU: 0, Ventilator: 0, MRI: 0, OR: 0 };
+        if (proc.resourceClaim && proc.resourceClaim !== 'none') {
+            if (proc.state === 'RUNNING' || proc.state === 'WAITING' || proc.state === 'READY') {
+                if (window.syncEngine && window.syncEngine.isHolder(proc.resourceClaim, proc.pid)) {
+                    alloc[proc.resourceClaim] = 1;
+                }
+            }
+        }
+        return alloc;
+    }
+
+    getProcessMax(proc) {
+        const max = { ICU: 0, Ventilator: 0, MRI: 0, OR: 0 };
+        if (proc.resourceClaim && proc.resourceClaim !== 'none') {
+            max[proc.resourceClaim] = 1;
+        }
+        return max;
+    }
+
+    getProcessNeed(proc) {
+        const max = this.getProcessMax(proc);
+        const alloc = this.getProcessAllocation(proc);
+        const need = {};
+        this.resourceKeys.forEach(res => {
+            need[res] = Math.max(0, max[res] - alloc[res]);
+        });
+        return need;
+    }
+}
+
+window.bankerRAG = new BankerAndRAG();
+
+
+/* FILE 5: js/synchronization.js */
+class SyncResource {
+    constructor(id, name, maxCount = 1) {
+        this.id = id;
+        this.name = name;
+        this.maxCount = maxCount;
+        this.availableCount = maxCount;
+        this.holderPID = null;
+        this.waitingQueue = [];
+        this.lockStatus = 'FREE';
+    }
+
+    acquire(pid) {
+        if (this.holderPID === pid) return true;
+
+        if (this.availableCount > 0 && this.waitingQueue.length === 0) {
+            this.availableCount--;
+            this.holderPID = pid;
+            this.lockStatus = 'LOCKED';
+            window.uiController.logSystem(`[MUTEX LOCK] Process ${pid} acquired Mutex Lock for ${this.name}`, 'lock');
+            return true;
+        } else {
+            if (!this.waitingQueue.includes(pid)) {
+                this.waitingQueue.push(pid);
+                window.uiController.logSystem(`[MUTEX BLOCK] Process ${pid} blocked waiting for ${this.name} Lock`, 'lock');
+            }
+            return false;
+        }
+    }
+
+    release(pid) {
+        if (this.holderPID === pid) {
+            this.holderPID = null;
+            this.availableCount++;
+            window.uiController.logSystem(`[MUTEX UNLOCK] Process ${pid} released Mutex Lock for ${this.name}`, 'lock');
+
+            if (this.waitingQueue.length > 0) {
+                const nextPID = this.waitingQueue.shift();
+                this.holderPID = nextPID;
+                this.availableCount--;
+                this.lockStatus = 'LOCKED';
+                window.uiController.logSystem(`[MUTEX HANDOVER] Lock for ${this.name} granted to waiting Process ${nextPID}`, 'lock');
+                
+                const proc = window.processManager.getProcess(nextPID);
+                if (proc && proc.state === 'WAITING') {
+                    proc.state = 'READY';
+                }
+            } else {
+                this.lockStatus = 'FREE';
+            }
+            return true;
+        }
+        return false;
+    }
+}
+
+class SynchronizationEngine {
+    constructor() {
+        this.syncResources = {
+            'ICU': new SyncResource('ICU', 'ICU Bed Unit', 1),
+            'Ventilator': new SyncResource('Ventilator', 'Ventilator System', 1),
+            'MRI': new SyncResource('MRI', 'MRI Scanner Suite', 1),
+            'OR': new SyncResource('OR', 'Operating Room Suite', 1)
+        };
+    }
+
+    requestResource(resourceKey, pid) {
+        if (!this.syncResources[resourceKey]) return true;
+        return this.syncResources[resourceKey].acquire(pid);
+    }
+
+    releaseResourceByPID(pid) {
+        Object.values(this.syncResources).forEach(res => {
+            if (res.holderPID === pid) {
+                res.release(pid);
+            }
+            const idx = res.waitingQueue.indexOf(pid);
+            if (idx !== -1) {
+                res.waitingQueue.splice(idx, 1);
+            }
+        });
+    }
+
+    isHolder(resourceKey, pid) {
+        const res = this.syncResources[resourceKey];
+        return res ? res.holderPID === pid : false;
+    }
+
+    reset() {
+        this.syncResources = {
+            'ICU': new SyncResource('ICU', 'ICU Bed Unit', 1),
+            'Ventilator': new SyncResource('Ventilator', 'Ventilator System', 1),
+            'MRI': new SyncResource('MRI', 'MRI Scanner Suite', 1),
+            'OR': new SyncResource('OR', 'Operating Room Suite', 1)
+        };
+    }
+}
+
+window.syncEngine = new SynchronizationEngine();
+
+
+/* FILE 6: js/memory_manager.js */
+class MemoryManager {
+    constructor() {
+        this.totalMemory = 1024;
+        this.allocationPolicy = 'first_fit';
+        this.memoryBlocks = [
+            { id: 'block-0', start: 0, size: 1024, isAllocated: false, pid: null, procName: 'Free Space' }
+        ];
+
+        this.pageReplacementAlgo = 'lru';
+        this.pageFrames = [
+            { frameId: 0, pageNum: null, lastAccess: -1, loadTime: -1 },
+            { frameId: 1, pageNum: null, lastAccess: -1, loadTime: -1 },
+            { frameId: 2, pageNum: null, lastAccess: -1, loadTime: -1 },
+            { frameId: 3, pageNum: null, lastAccess: -1, loadTime: -1 }
+        ];
+
+        this.pageHits = 0;
+        this.pageFaults = 0;
+        this.accessCounter = 0;
+    }
+
+    allocateMemory(pid, procName, sizeKB) {
+        let candidateIdx = -1;
+        const freeBlocks = [];
+        this.memoryBlocks.forEach((blk, idx) => {
+            if (!blk.isAllocated && blk.size >= sizeKB) {
+                freeBlocks.push({ idx: idx, block: blk });
+            }
+        });
+
+        if (freeBlocks.length === 0) {
+            window.uiController.logSystem(`[MEMORY ERROR] Out of Memory! Cannot allocate ${sizeKB}KB for ${pid}`, 'memory');
+            return false;
+        }
+
+        if (this.allocationPolicy === 'first_fit') {
+            candidateIdx = freeBlocks[0].idx;
+        } else if (this.allocationPolicy === 'best_fit') {
+            freeBlocks.sort((a, b) => a.block.size - b.block.size);
+            candidateIdx = freeBlocks[0].idx;
+        } else if (this.allocationPolicy === 'worst_fit') {
+            freeBlocks.sort((a, b) => b.block.size - a.block.size);
+            candidateIdx = freeBlocks[0].idx;
+        }
+
+        const targetBlock = this.memoryBlocks[candidateIdx];
+        const remainingSize = targetBlock.size - sizeKB;
+
+        targetBlock.isAllocated = true;
+        targetBlock.pid = pid;
+        targetBlock.procName = procName;
+        targetBlock.size = sizeKB;
+
+        if (remainingSize > 0) {
+            const newFreeBlock = {
+                id: `block-${Date.now()}`,
+                start: targetBlock.start + sizeKB,
+                size: remainingSize,
+                isAllocated: false,
+                pid: null,
+                procName: 'Free Space'
+            };
+            this.memoryBlocks.splice(candidateIdx + 1, 0, newFreeBlock);
+        }
+
+        window.uiController.logSystem(`[MEMORY ALLOCATED] ${sizeKB}KB assigned to ${pid} using ${this.allocationPolicy.toUpperCase()}`, 'memory');
+        return true;
+    }
+
+    deallocateMemory(pid) {
+        let freed = false;
+        this.memoryBlocks.forEach(blk => {
+            if (blk.pid === pid) {
+                blk.isAllocated = false;
+                blk.pid = null;
+                blk.procName = 'Free Space';
+                freed = true;
+            }
+        });
+
+        if (freed) {
+            this.mergeAdjacentFreeBlocks();
+            window.uiController.logSystem(`[MEMORY RECLAIMED] Memory freed for discharged process ${pid}`, 'memory');
+        }
+    }
+
+    mergeAdjacentFreeBlocks() {
+        for (let i = 0; i < this.memoryBlocks.length - 1; i++) {
+            const curr = this.memoryBlocks[i];
+            const next = this.memoryBlocks[i + 1];
+
+            if (!curr.isAllocated && !next.isAllocated) {
+                curr.size += next.size;
+                this.memoryBlocks.splice(i + 1, 1);
+                i--;
+            }
+        }
+    }
+
+    accessPage(pageNum) {
+        this.accessCounter++;
+        const pNum = parseInt(pageNum);
+
+        const hitFrame = this.pageFrames.find(f => f.pageNum === pNum);
+
+        if (hitFrame) {
+            this.pageHits++;
+            hitFrame.lastAccess = this.accessCounter;
+            return { hit: true, frameId: hitFrame.frameId, message: `PAGE HIT! Page #${pNum} found in Frame ${hitFrame.frameId}` };
+        }
+
+        this.pageFaults++;
+
+        const emptyFrame = this.pageFrames.find(f => f.pageNum === null);
+        if (emptyFrame) {
+            emptyFrame.pageNum = pNum;
+            emptyFrame.lastAccess = this.accessCounter;
+            emptyFrame.loadTime = this.accessCounter;
+            return { hit: false, frameId: emptyFrame.frameId, message: `PAGE FAULT! Loaded Page #${pNum} into empty Frame ${emptyFrame.frameId}` };
+        }
+
+        let victimFrame = null;
+        if (this.pageReplacementAlgo === 'lru') {
+            this.pageFrames.sort((a, b) => a.lastAccess - b.lastAccess);
+            victimFrame = this.pageFrames[0];
+        } else {
+            this.pageFrames.sort((a, b) => a.loadTime - b.loadTime);
+            victimFrame = this.pageFrames[0];
+        }
+
+        const oldPage = victimFrame.pageNum;
+        victimFrame.pageNum = pNum;
+        victimFrame.lastAccess = this.accessCounter;
+        victimFrame.loadTime = this.accessCounter;
+
+        this.pageFrames.sort((a, b) => a.frameId - b.frameId);
+
+        return { hit: false, frameId: victimFrame.frameId, message: `PAGE FAULT & REPLACEMENT! Evicted Page #${oldPage} from Frame ${victimFrame.frameId} -> Loaded Page #${pNum}` };
+    }
+
+    getStats() {
+        let used = 0;
+        this.memoryBlocks.forEach(b => { if (b.isAllocated) used += b.size; });
+        const free = this.totalMemory - used;
+        let extFrag = 0;
+        this.memoryBlocks.forEach(b => { if (!b.isAllocated && b.size < 64) extFrag += b.size; });
+
+        return { total: this.totalMemory, used: used, free: free, extFrag: extFrag };
+    }
+
+    reset() {
+        this.memoryBlocks = [
+            { id: 'block-0', start: 0, size: 1024, isAllocated: false, pid: null, procName: 'Free Space' }
+        ];
+        this.pageFrames = [
+            { frameId: 0, pageNum: null, lastAccess: -1, loadTime: -1 },
+            { frameId: 1, pageNum: null, lastAccess: -1, loadTime: -1 },
+            { frameId: 2, pageNum: null, lastAccess: -1, loadTime: -1 },
+            { frameId: 3, pageNum: null, lastAccess: -1, loadTime: -1 }
+        ];
+        this.pageHits = 0;
+        this.pageFaults = 0;
+        this.accessCounter = 0;
+    }
+}
+
+window.memoryManager = new MemoryManager();
+
+
+/* FILE 7: js/os_engine.js */
+class OSEngine {
+    constructor() {
+        this.isRunning = false;
+        this.tickCounter = 0;
+        this.tickSpeedMs = 800;
+        this.timerInterval = null;
+    }
+
+    start() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+        window.uiController.updateStatusUI('RUNNING');
+
+        this.timerInterval = setInterval(() => {
+            this.executeClockTick();
+        }, this.tickSpeedMs);
+
+        window.uiController.logSystem('[SIMULATION STARTED] Clock ticks active.', 'system');
+    }
+
+    pause() {
+        if (!this.isRunning) return;
+        this.isRunning = false;
+        clearInterval(this.timerInterval);
+        this.timerInterval = null;
+        window.uiController.updateStatusUI('PAUSED');
+        window.uiController.logSystem('[SIMULATION PAUSED] Clock ticks suspended.', 'system');
+    }
+
+    step() {
+        this.pause();
+        this.executeClockTick();
+        window.uiController.logSystem(`[SIMULATION STEP] Executed Tick ${this.tickCounter}`, 'system');
+    }
+
+    setSpeed(speedMs) {
+        this.tickSpeedMs = parseInt(speedMs);
+        if (this.isRunning) {
+            this.pause();
+            this.start();
+        }
+    }
+
+    executeClockTick() {
+        this.tickCounter++;
+        const allProcs = window.processManager.getAllProcesses();
+
+        const readyQueue = [];
+        allProcs.forEach(proc => {
+            if (proc.state === 'NEW') {
+                const allocSuccess = window.memoryManager.allocateMemory(proc.pid, proc.name, proc.memoryRequired);
+                if (allocSuccess) {
+                    proc.state = 'READY';
+                }
+            }
+
+            if (proc.state === 'READY' || proc.state === 'RUNNING') {
+                if (proc.resourceClaim && proc.resourceClaim !== 'none') {
+                    const lockGranted = window.syncEngine.requestResource(proc.resourceClaim, proc.pid);
+                    if (lockGranted) {
+                        readyQueue.push(proc);
+                    } else {
+                        proc.state = 'WAITING';
+                    }
+                } else {
+                    readyQueue.push(proc);
+                }
+            }
+        });
+
+        window.cpuScheduler.scheduleNext(this.tickCounter, readyQueue, window.processManager);
+        window.uiController.renderAll();
+    }
+
+    loadPreset(presetKey) {
+        this.pause();
+        window.processManager.resetAll();
+        window.cpuScheduler.reset();
+        window.bankerRAG.resources = {
+            'ICU': { total: 3, available: 3 },
+            'Ventilator': { total: 2, available: 2 },
+            'MRI': { total: 2, available: 2 },
+            'OR': { total: 2, available: 2 }
+        };
+        window.syncEngine.reset();
+        window.memoryManager.reset();
+        this.tickCounter = 0;
+
+        if (presetKey === 'default') {
+            window.processManager.createProcess('Cardiac Emergency', 1, 6, 128, 'ICU');
+            window.processManager.createProcess('Appendectomy Surgery', 2, 5, 96, 'OR');
+            window.processManager.createProcess('Brain MRI Scan', 3, 4, 64, 'MRI');
+            window.processManager.createProcess('Routine Blood Test', 4, 3, 32, 'none');
+            window.uiController.logSystem('[PRESET LOADED] Balanced ER Load (P1, P2, P3, P4 cases added)', 'system');
+
+        } else if (presetKey === 'mass_casualty') {
+            window.cpuScheduler.setAlgorithm('priority_p');
+            document.getElementById('algo-select').value = 'priority_p';
+            
+            window.processManager.createProcess('Minor Wound Care', 4, 8, 32, 'none');
+            window.processManager.createProcess('Trauma - Car Crash 1', 1, 5, 128, 'ICU');
+            window.processManager.createProcess('Trauma - Car Crash 2', 1, 4, 128, 'Ventilator');
+            window.processManager.createProcess('Severe Burn Case', 1, 6, 96, 'OR');
+            window.uiController.logSystem('[PRESET LOADED] Mass Casualty Incident (Preemptive Priority Preemption active)', 'system');
+
+        } else if (presetKey === 'deadlock_risk') {
+            window.processManager.createProcess('Organ Transplant (P101)', 1, 8, 128, 'OR');
+            window.processManager.createProcess('High Risk ICU (P102)', 2, 7, 96, 'Ventilator');
+            window.uiController.logSystem('[PRESET LOADED] Resource Contention (Simulates multi-resource lock deadlock risk)', 'system');
+
+        } else if (presetKey === 'memory_stress') {
+            window.processManager.createProcess('Full Body CT Scan Buffer', 2, 6, 256, 'MRI');
+            window.processManager.createProcess('DNA Sequencing Buffer', 3, 7, 256, 'none');
+            window.processManager.createProcess('Lab Pathology Database', 3, 8, 256, 'none');
+            window.processManager.createProcess('Real-time ICU Telemetry', 1, 5, 128, 'ICU');
+
+            window.memoryManager.accessPage(1);
+            window.memoryManager.accessPage(2);
+            window.memoryManager.accessPage(3);
+            window.memoryManager.accessPage(4);
+            window.memoryManager.accessPage(5);
+
+            window.uiController.logSystem('[PRESET LOADED] Heavy Paging & Memory Pressure (Page replacement active)', 'system');
+        }
+
+        window.uiController.renderAll();
+    }
+
+    reset() {
+        this.pause();
+        window.processManager.resetAll();
+        window.cpuScheduler.reset();
+        window.bankerRAG.resources = {
+            'ICU': { total: 3, available: 3 },
+            'Ventilator': { total: 2, available: 2 },
+            'MRI': { total: 2, available: 2 },
+            'OR': { total: 2, available: 2 }
+        };
+        window.syncEngine.reset();
+        window.memoryManager.reset();
+        this.tickCounter = 0;
+        window.uiController.logSystem('[SIMULATION RESET] All queues and registers cleared.', 'system');
+        window.uiController.renderAll();
+    }
+}
+
+window.osEngine = new OSEngine();

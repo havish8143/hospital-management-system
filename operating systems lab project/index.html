@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hospital OS - Emergency & Resource Management Simulator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navbar -->
+        <header class="navbar">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-hospital-user"></i></div>
+                <div class="logo-text">
+                    <h1>Smart Hospital <span class="badge-os">OS Engine v2.5</span></h1>
+                    <p>Operating Systems Lab Mini Project • Integrated Multi-Concept Simulator</p>
+                </div>
+            </div>
+
+            <!-- Global Simulation Control Panel -->
+            <div class="controls-bar">
+                <div class="sim-status">
+                    <span class="status-indicator" id="status-indicator"></span>
+                    <span id="status-text">PAUSED</span>
+                    <span class="clock-display"><i class="fa-regular fa-clock"></i> Tick: <span id="tick-counter">0</span>s</span>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-play" class="btn btn-primary" title="Start / Resume Simulation"><i class="fa-solid fa-play"></i> Run</button>
+                    <button id="btn-pause" class="btn btn-secondary" title="Pause Simulation" disabled><i class="fa-solid fa-pause"></i> Pause</button>
+                    <button id="btn-step" class="btn btn-outline" title="Execute Next Clock Tick"><i class="fa-solid fa-step-forward"></i> Step</button>
+                    <button id="btn-reset" class="btn btn-danger" title="Reset Simulation State"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="speed-range"><i class="fa-solid fa-gauge-high"></i> Speed:</label>
+                    <input type="range" id="speed-range" min="200" max="2000" step="100" value="800">
+                    <span id="speed-val">0.8s/tick</span>
+                </div>
+
+                <div class="preset-selector">
+                    <select id="preset-select" class="form-select">
+                        <option value="default">📌 Preset: Balanced ER Load</option>
+                        <option value="mass_casualty">🚨 Scenario 1: Mass Casualty (Priority Preemption)</option>
+                        <option value="deadlock_risk">⚠️ Scenario 2: Resource Contention (Deadlock Risk)</option>
+                        <option value="memory_stress">💾 Scenario 3: Heavy Paging & Memory Pressure</option>
+                    </select>
+                </div>
+
+                <button id="btn-add-patient" class="btn btn-accent"><i class="fa-solid fa-user-plus"></i> New Patient</button>
+            </div>
+        </header>
+
+        <!-- OS Concepts Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="tab-scheduling">
+                <i class="fa-solid fa-microchip"></i> 1. CPU & Priority Scheduling
+            </button>
+            <button class="tab-btn" data-tab="tab-deadlock">
+                <i class="fa-solid fa-shield-halved"></i> 2. Banker's & Deadlock RAG
+            </button>
+            <button class="tab-btn" data-tab="tab-sync">
+                <i class="fa-solid fa-lock"></i> 3. Thread Synchronization & Locks
+            </button>
+            <button class="tab-btn" data-tab="tab-memory">
+                <i class="fa-solid fa-memory"></i> 4. Memory Partitioning & Paging
+            </button>
+            <button class="tab-btn" data-tab="tab-analytics">
+                <i class="fa-solid fa-chart-line"></i> 5. Performance Analytics
+            </button>
+        </nav>
+
+        <!-- Main Workspace Viewports -->
+        <main class="main-content">
+            <!-- TAB 1: CPU & PRIORITY SCHEDULING -->
+            <section id="tab-scheduling" class="tab-page active">
+                <div class="grid-2col">
+                    <!-- Left: Process Queue & PCB Monitor -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Patient Triage / Process Queue</h3>
+                            <div class="scheduler-algorithm-select">
+                                <label for="algo-select">Algorithm:</label>
+                                <select id="algo-select" class="form-select-sm">
+                                    <option value="priority_p" selected>Preemptive Priority (ER Triage)</option>
+                                    <option value="rr">Round Robin (Time Quantum = 2s)</option>
+                                    <option value="sjf">Shortest Job First (SJF)</option>
+                                    <option value="fcfs">First-Come, First-Served (FCFS)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table" id="pcb-table">
+                                    <thead>
+                                        <tr>
+                                            <th>PID</th>
+                                            <th>Patient Name</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>State</th>
+                                            <th>Burst (s)</th>
+                                            <th>Remaining</th>
+                                            <th>Mem (KB)</th>
+                                            <th>Resource Claim</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pcb-table-body">
+                                        <!-- Dynamic PCB rows injected here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: CPU Core Execution & Live State -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-stethoscope"></i> Operating Room CPU Core Monitor</h3>
+                            <span class="badge-active" id="aging-badge"><i class="fa-solid fa-clock-rotate-left"></i> Aging Active (Starvation Prevention)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="cpu-core-display">
+                                <div class="cpu-box">
+                                    <div class="cpu-title">Active OR Doctor / CPU Core</div>
+                                    <div class="cpu-content" id="cpu-current-process">
+                                        <span class="idle-text">IDLE - Ready Queue Empty</span>
+                                    </div>
+                                    <div class="cpu-metrics" id="cpu-live-metrics">
+                                        <span>Util: <strong id="cpu-util-val">0%</strong></span>
+                                        <span>Context Switches: <strong id="cpu-cs-val">0</strong></span>
+                                    </div>
+                                </div>
+
+                                <div class="process-state-diagram">
+                                    <h4>OS Process State Machine</h4>
+                                    <div class="states-flow">
+                                        <div class="state-node" id="state-new">NEW <span class="count" id="cnt-new">0</span></div>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <div class="state-node" id="state-ready">READY <span class="count" id="cnt-ready">0</span></div>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <div class="state-node running" id="state-running">RUNNING <span class="count" id="cnt-running">0</span></div>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                        <div class="state-node" id="state-terminated">DONE <span class="count" id="cnt-terminated">0</span></div>
+                                    </div>
+                                    <div class="waiting-state-sub" id="state-waiting">
+                                        <i class="fa-solid fa-hourglass-half"></i> BLOCKED / WAITING (Resource Lock): <span class="count" id="cnt-waiting">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Timeline Gantt Chart -->
+                <div class="card margin-top">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-gantt"></i> Dynamic Execution Gantt Chart Timeline</h3>
+                        <div class="gantt-legend">
+                            <span class="legend-item P1"><span class="dot"></span> P1: Emergency Trauma</span>
+                            <span class="legend-item P2"><span class="dot"></span> P2: Urgent Surgery</span>
+                            <span class="legend-item P3"><span class="dot"></span> P3: General OPD</span>
+                            <span class="legend-item P4"><span class="dot"></span> P4: Routine Checkup</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="gantt-container" id="gantt-timeline">
+                            <div class="gantt-empty">No simulation ticks recorded yet. Click "Run" or "Step" to begin.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: BANKER'S ALGORITHM & DEADLOCK RAG GRAPH -->
+            <section id="tab-deadlock" class="tab-page">
+                <div class="grid-2col">
+                    <!-- Left: Banker's Matrix & Safety Evaluation -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-calculator"></i> Banker's Algorithm - Resource Matrices</h3>
+                            <button id="btn-check-safety" class="btn btn-secondary btn-sm"><i class="fa-solid fa-check-double"></i> Check Safe State</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="banker-matrices">
+                                <div class="matrix-box">
+                                    <h4>Available Resources</h4>
+                                    <div class="res-counters" id="banker-available-res">
+                                        <!-- Injected dynamically -->
+                                    </div>
+                                </div>
+
+                                <div class="matrix-tables-grid">
+                                    <div class="matrix-sub">
+                                        <h4>Allocation Matrix</h4>
+                                        <div id="matrix-allocation-container"></div>
+                                    </div>
+                                    <div class="matrix-sub">
+                                        <h4>Max Claim Matrix</h4>
+                                        <div id="matrix-max-container"></div>
+                                    </div>
+                                    <div class="matrix-sub">
+                                        <h4>Need Matrix (Max - Alloc)</h4>
+                                        <div id="matrix-need-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="safety-result-panel" id="safety-result">
+                                <div class="alert alert-info">
+                                    <i class="fa-solid fa-circle-info"></i> Click <strong>"Check Safe State"</strong> or request resources to run the Banker's Safety Verification.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Resource Allocation Graph (RAG) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-diagram-project"></i> Interactive Resource Allocation Graph (RAG)</h3>
+                            <button id="btn-detect-deadlock" class="btn btn-danger btn-sm"><i class="fa-solid fa-triangle-exclamation"></i> Detect Cycle</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="rag-canvas-wrapper">
+                                <canvas id="rag-canvas" width="550" height="380"></canvas>
+                                <div class="rag-legend">
+                                    <span><i class="fa-solid fa-circle node-proc"></i> Process (Patient)</span>
+                                    <span><i class="fa-solid fa-square node-res"></i> Resource (Equipment)</span>
+                                    <span><i class="fa-solid fa-arrow-right edge-alloc"></i> Allocation (Held)</span>
+                                    <span><i class="fa-solid fa-arrow-right edge-req"></i> Request (Wait)</span>
+                                </div>
+                            </div>
+                            <div id="rag-detection-banner" class="rag-banner">
+                                <span id="rag-status-text">Status: Normal - No Deadlock Cycles Detected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: THREAD SYNCHRONIZATION & MUTEX LOCKS -->
+            <section id="tab-sync" class="tab-page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-lock"></i> Critical Section & Semaphore / Mutex Monitor</h3>
+                        <p class="subtitle">Ensures exclusive access to shared medical units (ICU, Ventilator, MRI, Surgery Suite) to avoid race conditions.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="resources-sync-grid" id="sync-resources-grid">
+                            <!-- Dynamically generated mutex cards for ICU, Ventilator, MRI, Surgery Room -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: MEMORY MANAGEMENT & PAGING -->
+            <section id="tab-memory" class="tab-page">
+                <div class="grid-2col">
+                    <!-- Left: Main Memory Allocation (First-Fit, Best-Fit, Worst-Fit) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-hard-drive"></i> Main Memory Partitioning</h3>
+                            <div class="fit-algorithm-select">
+                                <label for="mem-algo-select">Policy:</label>
+                                <select id="mem-algo-select" class="form-select-sm">
+                                    <option value="first_fit" selected>First-Fit</option>
+                                    <option value="best_fit">Best-Fit</option>
+                                    <option value="worst_fit">Worst-Fit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="memory-stats-summary">
+                                <span>Total Memory: <strong>1024 KB</strong></span>
+                                <span>Used: <strong id="mem-used-val">0 KB</strong></span>
+                                <span>Free: <strong id="mem-free-val">1024 KB</strong></span>
+                                <span>Ext. Fragmentation: <strong id="mem-frag-val">0 KB</strong></span>
+                            </div>
+
+                            <div class="memory-visualizer" id="memory-map-bar">
+                                <!-- Memory blocks rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Virtual Memory Paging & Page Replacement -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-layer-group"></i> Virtual Memory Page Table & LRU / FIFO Simulation</h3>
+                            <div class="page-algo-select">
+                                <label for="page-algo-select">Page Replacement:</label>
+                                <select id="page-algo-select" class="form-select-sm">
+                                    <option value="lru" selected>LRU (Least Recently Used)</option>
+                                    <option value="fifo">FIFO (First-In, First-Out)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="paging-stats">
+                                <span class="badge-metric"><i class="fa-solid fa-circle-check"></i> Page Hits: <strong id="page-hits-val">0</strong></span>
+                                <span class="badge-metric danger"><i class="fa-solid fa-circle-xmark"></i> Page Faults: <strong id="page-faults-val">0</strong></span>
+                                <span class="badge-metric info">Hit Ratio: <strong id="page-ratio-val">100%</strong></span>
+                            </div>
+
+                            <div class="page-frames-wrapper">
+                                <h4>Physical Page Frames (4 Frames Available)</h4>
+                                <div class="page-frames-grid" id="page-frames-container">
+                                    <!-- Dynamic frames -->
+                                </div>
+                            </div>
+
+                            <div class="page-request-simulator margin-top">
+                                <h4>Simulate Patient Medical File Page Request</h4>
+                                <div class="input-group">
+                                    <input type="number" id="page-req-input" min="0" max="15" value="3" class="form-control-sm" placeholder="Page # (0-15)">
+                                    <button id="btn-request-page" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-export"></i> Access Page</button>
+                                </div>
+                                <div id="page-request-log" class="page-log-box">Log: Access records to see page hits and faults.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: ANALYTICS & OS COMPARATIVE METRICS -->
+            <section id="tab-analytics" class="tab-page">
+                <div class="grid-3col">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="stat-info">
+                            <h4>Avg Waiting Time</h4>
+                            <span class="stat-value" id="stat-avg-wait">0.00 s</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-right-left"></i></div>
+                        <div class="stat-info">
+                            <h4>Avg Turnaround Time</h4>
+                            <span class="stat-value" id="stat-avg-turnaround">0.00 s</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="stat-info">
+                            <h4>CPU Throughput</h4>
+                            <span class="stat-value" id="stat-throughput">0.00 proc/min</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card margin-top">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-square-poll-vertical"></i> Operating System Concept Audit & Assessment Table</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>OS Concept</th>
+                                    <th>Implementation Method</th>
+                                    <th>Hospital Real-World Mapping</th>
+                                    <th>Current Active Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>1. CPU & Priority Scheduling</strong></td>
+                                    <td>Preemptive Priority / RR / SJF with Context Switching</td>
+                                    <td>Emergency Triage (P1 Trauma vs P4 Routine)</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2. Process Management</strong></td>
+                                    <td>Process Control Block (PCB), State Transitions</td>
+                                    <td>Patient Treatment Lifecycle (Arrival to Discharge)</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>3. Thread Synchronization</strong></td>
+                                    <td>Mutex Locks & Counting Semaphores</td>
+                                    <td>Shared Medical Equipment (ICU, Surgery Suite, MRI)</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>4. Deadlock Management</strong></td>
+                                    <td>Banker's Safety Algorithm & RAG Cycle Detection</td>
+                                    <td>Preventing multi-equipment surgical deadlock</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>5. Memory & Paging</strong></td>
+                                    <td>First-Fit/Best-Fit Allocation & LRU/FIFO Paging</td>
+                                    <td>Patient Medical Files & Diagnostic Image Buffers</td>
+                                    <td><span class="status-badge green">ACTIVE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Execution Log Streamer -->
+        <footer class="log-footer">
+            <div class="log-header">
+                <span><i class="fa-solid fa-terminal"></i> OS System Console Log</span>
+                <button id="btn-clear-log" class="btn-text-sm"><i class="fa-solid fa-trash"></i> Clear Log</button>
+            </div>
+            <div class="log-content" id="os-log-container">
+                <div class="log-entry system">[SYSTEM INITIALIZED] Smart Hospital OS Ready. Select an algorithm or press Run.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal: Add New Patient / Process -->
+    <div class="modal-overlay" id="add-patient-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> Register New Hospital Patient Process</h3>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <form id="add-patient-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="input-patient-name">Patient Name / Condition:</label>
+                        <input type="text" id="input-patient-name" class="form-control" placeholder="e.g. Cardiac Arrest Case" required>
+                    </div>
+
+                    <div class="grid-2col-compact">
+                        <div class="form-group">
+                            <label for="input-priority">Priority Level:</label>
+                            <select id="input-priority" class="form-control">
+                                <option value="1">P1 - Emergency Trauma (Highest)</option>
+                                <option value="2" selected>P2 - Urgent Surgery</option>
+                                <option value="3">P3 - General OPD Ward</option>
+                                <option value="4">P4 - Routine Checkup (Lowest)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-burst">Burst Time (seconds):</label>
+                            <input type="number" id="input-burst" min="1" max="20" value="4" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-2col-compact">
+                        <div class="form-group">
+                            <label for="input-memory">Memory Needed (KB):</label>
+                            <input type="number" id="input-memory" min="32" max="256" step="16" value="128" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-resource">Primary Equipment Required:</label>
+                            <select id="input-resource" class="form-control">
+                                <option value="none">None (General Ward)</option>
+                                <option value="ICU">ICU Bed</option>
+                                <option value="Ventilator">Ventilator</option>
+                                <option value="MRI">MRI Scanner</option>
+                                <option value="OR">Surgery Room</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Process to Queue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Modules -->
+    <script src="js/process_manager.js"></script>
+    <script src="js/cpu_scheduler.js"></script>
+    <script src="js/banker_rag.js"></script>
+    <script src="js/synchronization.js"></script>
+    <script src="js/memory_manager.js"></script>
+    <script src="js/os_engine.js"></script>
+    <script src="js/ui_controller.js"></script>
+</body>
+</html>

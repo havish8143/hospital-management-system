@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Overview PPT - Smart Hospital Resource Management System</title>
+    <!-- Clean Academic Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Consolas&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-page: #f1f5f9;
+            --bg-slide: #ffffff;
+            --primary: #1e40af; /* Classic Academic Navy */
+            --secondary: #0284c7;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --card-bg: #f8fafc;
+            --accent: #16a34a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-page);
+            color: var(--text);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ppt-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            height: 580px;
+            background: var(--bg-slide);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 36px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* Slide Top Header */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .slide-header h2 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-num {
+            font-family: 'Consolas', monospace;
+            background: #e2e8f0;
+            color: #334155;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Slide Body Content */
+        .slide-body {
+            flex: 1;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        /* Slide Footer */
+        .slide-footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        /* Title Slide Layout */
+        .title-slide-layout {
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: #ffffff;
+        }
+
+        .academic-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .title-slide-layout h1 {
+            font-size: 2.4rem;
+            color: var(--primary);
+            line-height: 1.25;
+            margin: 6px 0;
+        }
+
+        .title-slide-layout p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 780px;
+        }
+
+        .author-box {
+            display: flex;
+            gap: 30px;
+            margin-top: 18px;
+            background: var(--card-bg);
+            padding: 14px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .author-card {
+            text-align: left;
+        }
+        .author-card strong {
+            font-size: 1.05rem;
+            color: var(--text);
+            display: block;
+        }
+        .author-card span {
+            color: var(--secondary);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Grid Layouts & Cards */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .card h3 {
+            font-size: 1.05rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card p, .card ul {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        ul { padding-left: 18px; }
+        li { margin-bottom: 5px; }
+
+        /* Simple Comparison Table */
+        .simple-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin-top: 6px;
+        }
+        .simple-table th, .simple-table td {
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .simple-table th {
+            background: #e2e8f0;
+            color: var(--text);
+        }
+
+        /* Controls Bottom Bar */
+        .controls-nav {
+            height: 60px;
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .btn-ctrl {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 7px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-ctrl:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        @media print {
+            body { background: #ffffff; color: #000000; overflow: visible; }
+            .ppt-wrapper { padding: 0; display: block; }
+            .slide { display: flex !important; page-break-after: always; height: 100vh; max-width: 100%; border: none; box-shadow: none; background: #ffffff; color: #000000; }
+            .controls-nav { display: none; }
+            .slide-header h2, .card h3, .title-slide-layout h1 { color: #000000 !important; }
+            .card, .author-box { background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; }
+            .card p, .card ul, .title-slide-layout .subtitle, .slide-footer { color: #475569 !important; }
+            .academic-badge { background: #e2e8f0; color: #0f172a; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ppt-wrapper">
+        <!-- SLIDE 1: Title Slide (Simple Clean Academic Theme) -->
+        <div class="slide active title-slide-layout">
+            <span class="academic-badge">BCSE303P - Operating Systems Lab • September 2026</span>
+            <h1>Smart Hospital Resource Management System</h1>
+            <p class="subtitle">An Application-Oriented OS Project Overview Demonstrating CPU Scheduling, Process Control, Mutex Synchronization, Banker's Algorithm & Memory Paging</p>
+
+            <div class="author-box">
+                <div class="author-card">
+                    <strong>Havish</strong>
+                    <span>Reg. No: 24BYB0057</span>
+                </div>
+                <div style="width: 1px; background: var(--border);"></div>
+                <div class="author-card">
+                    <strong>Shanmukha Simha</strong>
+                    <span>Reg. No: 24BDE0123</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;">
+                Guided by: <strong>Dr. PORKODI S</strong> (School of Computer Science Engineering & Information Systems)
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Project Overview & Basic Concept -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-hospital"></i> Project Overview & Basic Idea</h2>
+                <span class="slide-num">Slide 02 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-bullseye"></i> Why We Built This Project</h3>
+                        <p>In our OS lab curriculum, concepts like scheduling, mutexes, and deadlocks are usually studied as separate textbook C programs.</p>
+                        <p style="margin-top: 8px;">We wanted to build a practical system where multiple OS concepts work together to solve a real-world problem.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fa-solid fa-stethoscope"></i> The Hospital Problem</h3>
+                        <p>Hospital emergency wards face strict resource bottlenecks:</p>
+                        <ul style="margin-top: 6px;">
+                            <li>Limited doctors (CPU cores) for consultations</li>
+                            <li>Limited specialized machines (ICU, MRI, Surgery Rooms)</li>
+                            <li>Varying patient emergency urgency levels</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>Havish & Shanmukha Simha</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Hospital Operations mapped to OS Concepts -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-arrows-split-up-and-left"></i> Real-World Mapping to OS Concepts</h2>
+                <span class="slide-num">Slide 03 / 10</span>
+            </div>
+            <div class="slide-body">
+                <table class="simple-table">
+                    <thead>
+                        <tr>
+                            <th>Real-World Hospital Element</th>
+                            <th>Corresponding OS Concept</th>
+                            <th>How It Operates in Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Patient Admissions</strong></td>
+                            <td>OS Processes & PCB</td>
+                            <td>Tracks PID, priority, burst time, and state (NEW to DONE)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Triage Doctor / Consultation</strong></td>
+                            <td>CPU Scheduling & Preemption</td>
+                            <td>P1 Emergency Trauma preempts lower priority P4 cases on CPU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shared Medical Machines (ICU, MRI)</strong></td>
+                            <td>Mutex Locks & Semaphores</td>
+                            <td>Locks resource; moves competing patients to WAITING queue</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multi-Machine Surgery Booking</strong></td>
+                            <td>Banker's Algorithm & RAG Graph</td>
+                            <td>Verifies Safe Sequence (`Need = Max - Alloc`) & detects cycle deadlocks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Patient File & Scan Records</strong></td>
+                            <td>Memory Partitioning & Paging</td>
+                            <td>First/Best-Fit RAM allocation + LRU/FIFO virtual page replacement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>OS Concepts Mapping</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: CPU Scheduling & Triage (Concept 1) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-microchip"></i> Concept 1: CPU Priority Scheduling</h2>
+                <span class="slide-num">Slide 04 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>4 Priority Triage Levels</h3>
+                        <ul>
+                            <li><strong>P1 (Emergency Trauma)</strong>: Highest priority (Heart attack, head injury). Preempts running CPU task immediately.</li>
+                            <li><strong>P2 (Urgent Surgery)</strong>: High priority queue placement.</li>
+                            <li><strong>P3 (General OPD Ward)</strong>: Standard doctor consultation.</li>
+                            <li><strong>P4 (Routine Checkup)</strong>: Lowest priority queue.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Preemption & Aging Mechanism</h3>
+                        <ul>
+                            <li><strong>Preemptive Context Switch</strong>: When a P1 patient arrives, the doctor CPU pauses lower priority tasks and handles P1 immediately.</li>
+                            <li><strong>Aging Counter</strong>: If a routine P4 patient waits in the queue for >10 ticks, aging logic boosts its priority to prevent starvation.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>CPU Scheduling Engine</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Process Control Block (Concept 2) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-id-card"></i> Concept 2: Process Control Block (PCB)</h2>
+                <span class="slide-num">Slide 05 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>PCB Structure</h3>
+                        <ul>
+                            <li><code>PID</code>: Unique ID (e.g., P101, P102)</li>
+                            <li><code>Priority</code>: Urgency level (P1 to P4)</li>
+                            <li><code>Burst Time</code>: Remaining treatment duration</li>
+                            <li><code>Memory Required</code>: Allocation in KB</li>
+                            <li><code>Resource Claim</code>: Equipment required (ICU, OR, MRI)</li>
+                            <li><code>Metrics</code>: Arrival, Wait & Turnaround times</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Process 5-State Machine</h3>
+                        <p>Each patient process transitions through standard OS lifecycle states:</p>
+                        <div style="background: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Consolas', monospace; color: var(--primary); margin: 10px 0; text-align: center; font-weight: bold;">
+                            NEW ➔ READY ➔ RUNNING ➔ WAITING ➔ DONE
+                        </div>
+                        <p>If an equipment lock is busy, the process stays in <strong>WAITING</strong> until freed.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>Process Management Module</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Thread Synchronization & Mutexes (Concept 3) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-lock"></i> Concept 3: Thread Synchronization & Mutexes</h2>
+                <span class="slide-num">Slide 06 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Shared Critical Equipment</h3>
+                        <ul>
+                            <li><strong>ICU Bed Mutex</strong>: Exclusive single-patient access.</li>
+                            <li><strong>Ventilator Mutex</strong>: Critical respiratory support lock.</li>
+                            <li><strong>MRI Scanner Mutex</strong>: Diagnostic imaging suite lock.</li>
+                            <li><strong>Operating Room Mutex</strong>: Surgical suite critical section.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Preventing Race Conditions</h3>
+                        <p>Two patient tasks cannot book the same MRI scanner simultaneously.</p>
+                        <p style="margin-top: 8px;">Our code uses a Mutex class. When a patient process acquires the lock, status becomes <code>LOCKED</code>. Requesting processes move to the <strong>Waiting List</strong> without causing race conditions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>Synchronization Engine</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Banker's Algorithm & RAG Graph (Concept 4) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-shield-halved"></i> Concept 4: Banker's Algorithm & RAG Graph</h2>
+                <span class="slide-num">Slide 07 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Banker's Safety Verification</h3>
+                        <p>Before granting multi-resource equipment requests, the algorithm calculates matrices to ensure system safety:</p>
+                        <ul style="margin-top: 6px;">
+                            <li>Maintains <code>Available</code>, <code>Max</code>, <code>Allocation</code></li>
+                            <li>Computes <code>Need = Max - Allocation</code></li>
+                            <li>Verifies that a valid safe sequence exists</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Resource Allocation Graph (RAG)</h3>
+                        <p>We render an interactive RAG graph on Canvas:</p>
+                        <ul style="margin-top: 6px;">
+                            <li><strong>Circles</strong> = Patient Processes</li>
+                            <li><strong>Squares</strong> = Equipment Resources</li>
+                            <li><strong>Solid Arrows</strong> = Held Allocations</li>
+                            <li><strong>Dashed Arrows</strong> = Pending Requests</li>
+                            <li>Auto-detects circular wait deadlocks.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>Deadlock Management Module</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Memory Partitioning & Virtual Paging (Concept 5) -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-memory"></i> Concept 5: Memory Allocation & Paging</h2>
+                <span class="slide-num">Slide 08 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Main Memory Allocation (RAM)</h3>
+                        <p>A 1024 KB memory block is managed to store active patient files:</p>
+                        <ul style="margin-top: 6px;">
+                            <li><strong>First-Fit</strong>: Allocates in first open space.</li>
+                            <li><strong>Best-Fit</strong>: Minimizes internal fragment size.</li>
+                            <li><strong>Worst-Fit</strong>: Uses largest available block.</li>
+                            <li>Adjacent free blocks merge upon discharge.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Virtual Memory Paging</h3>
+                        <p>Simulates accessing scan pages into 4 physical frames:</p>
+                        <ul style="margin-top: 6px;">
+                            <li><strong>LRU (Least Recently Used)</strong>: Evicts oldest unaccessed page.</li>
+                            <li><strong>FIFO</strong>: Replaces the oldest loaded page.</li>
+                            <li>Live counters for Page Hits, Page Faults, and Hit Ratio.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>Memory Management Engine</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: System Architecture & Tech Stack -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-code"></i> System Architecture & Tech Stack</h2>
+                <span class="slide-num">Slide 09 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="card">
+                        <h3>Frontend Dashboard</h3>
+                        <p>HTML5 & CSS3 with clean responsive layouts, data tables, Gantt chart, RAG canvas, and console log streamer.</p>
+                    </div>
+                    <div class="card">
+                        <h3>7 JavaScript Modules</h3>
+                        <p>Modular ES6 logic (`process_manager.js`, `cpu_scheduler.js`, `banker_rag.js`, `synchronization.js`, `memory_manager.js`, `os_engine.js`, `ui_controller.js`).</p>
+                    </div>
+                    <div class="card">
+                        <h3>Live Simulation Engine</h3>
+                        <p>Central clock ticker loop running at 0.8s per tick with step-by-step execution and scenario presets.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Overview PPT</span>
+                <span>Architecture Overview</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Conclusion & Summary -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2><i class="fa-solid fa-check-circle"></i> Conclusion & Summary</h2>
+                <span class="slide-num">Slide 10 / 10</span>
+            </div>
+            <div class="slide-body">
+                <div class="card" style="padding: 20px;">
+                    <h3 style="font-size: 1.15rem;">Key Takeaways</h3>
+                    <ul style="font-size: 0.95rem; line-height: 1.7; margin-top: 10px;">
+                        <li>Successfully integrated <strong>5 core Operating System concepts</strong> into a practical, real-world application.</li>
+                        <li>Demonstrated how scheduling algorithms, mutual exclusion locks, and memory algorithms solve hospital triage bottlenecks.</li>
+                        <li>Created an interactive dashboard for live testing, Gantt visualization, and deadlock safety verification.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-footer">
+                <span>Smart Hospital OS • Thank You! Open for Discussion</span>
+                <span>Havish & Shanmukha Simha</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="controls-nav">
+        <button class="btn-ctrl" id="prev-slide"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+        <span id="slide-indicator" style="font-family: 'Consolas', monospace; color: var(--primary); font-weight: bold;">Slide 1 of 10</span>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-ctrl" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save PDF</button>
+            <button class="btn-ctrl" id="next-slide">Next <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentIdx = 0;
+
+        function updateSlide(idx) {
+            slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+            document.getElementById('slide-indicator').textContent = `Slide ${idx + 1} of ${slides.length}`;
+        }
+
+        document.getElementById('prev-slide').addEventListener('click', () => {
+            if (currentIdx > 0) {
+                currentIdx--;
+                updateSlide(currentIdx);
+            }
+        });
+
+        document.getElementById('next-slide').addEventListener('click', () => {
+            if (currentIdx < slides.length - 1) {
+                currentIdx++;
+                updateSlide(currentIdx);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentIdx < slides.length - 1) {
+                currentIdx++;
+                updateSlide(currentIdx);
+            } else if (e.key === 'ArrowLeft' && currentIdx > 0) {
+                currentIdx--;
+                updateSlide(currentIdx);
+            }
+        });
+    </script>
+</body>
+</html>

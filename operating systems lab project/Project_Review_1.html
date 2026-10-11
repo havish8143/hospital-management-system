@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCSE303P - Project Review 1 - Smart Hospital Resource Management System</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 20mm 20mm 20mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            color: #000000;
+            line-height: 1.5;
+            background: #f4f6f9;
+            padding: 20px 0;
+        }
+
+        .document-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 30px auto;
+            background: #ffffff;
+            padding: 25mm 25mm 25mm 25mm;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        /* Cover Page Styling */
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            height: 247mm; /* Printable height within margins */
+        }
+
+        .vit-header-text {
+            font-size: 26pt;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #0b2545;
+            margin-top: 10px;
+        }
+
+        .vit-subtext {
+            font-size: 11pt;
+            font-weight: normal;
+            color: #333333;
+            margin-top: 4px;
+        }
+
+        .school-title {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 30px;
+            color: #111111;
+        }
+
+        .sem-text {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .course-code {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 25px;
+        }
+
+        .course-title {
+            font-size: 15pt;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .review-tag {
+            font-size: 15pt;
+            font-weight: bold;
+            margin-top: 25px;
+            text-transform: uppercase;
+        }
+
+        .project-title-box {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .project-title-label {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .project-title-val {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #0b2545;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        .students-box {
+            margin-top: 25px;
+            font-size: 13pt;
+            line-height: 1.8;
+        }
+
+        .guidance-box {
+            margin-top: 40px;
+            font-size: 12pt;
+            line-height: 1.6;
+        }
+
+        .guide-name {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        /* Review Content Page Styling */
+        .section-heading {
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 22px;
+            margin-bottom: 8px;
+        }
+
+        p.content-p {
+            font-size: 11pt;
+            text-align: justify;
+            margin-bottom: 12px;
+            text-indent: 0;
+            line-height: 1.5;
+        }
+
+        ul.content-list {
+            margin-left: 25px;
+            margin-bottom: 12px;
+        }
+
+        li.content-item {
+            font-size: 11pt;
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+        .ref-list {
+            margin-left: 20px;
+            font-size: 10pt;
+            line-height: 1.4;
+        }
+
+        .ref-item {
+            margin-bottom: 6px;
+            text-align: justify;
+        }
+
+        .print-btn-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-print {
+            background: #0b2545;
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        @media print {
+            body { background: #ffffff; padding: 0; }
+            .document-page { box-shadow: none; border: none; margin: 0; width: 100%; padding: 0; }
+            .print-btn-bar { display: none; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-btn-bar">
+        <button class="btn-print" onclick="window.print()">🖨️ Save as PDF / Print Official Review - 1 Report</button>
+    </div>
+
+    <!-- PAGE 1: OFFICIAL COVER PAGE -->
+    <div class="document-page">
+        <div class="cover-page">
+            <div style="width: 100%;">
+                <div style="font-size: 28pt; font-weight: bold; color: #1a365d; letter-spacing: 3px;">VIT</div>
+                <div style="font-size: 12pt; font-weight: bold; color: #1a365d;">Vellore Institute of Technology</div>
+                <div class="vit-subtext">(Deemed to be University under section 3 of UGC Act, 1956)</div>
+                
+                <div class="school-title">School of Computer Science Engineering and Information Systems</div>
+                <div class="sem-text">Fall Semester 2026-2027</div>
+                
+                <div class="course-code">BCSE303P</div>
+                <div class="course-title">Operating Systems Lab</div>
+                <div class="review-tag">Project Review - 1</div>
+            </div>
+
+            <div class="project-title-box">
+                <div class="project-title-label">TITLE</div>
+                <div class="project-title-val">Smart Hospital Resource Management System</div>
+            </div>
+
+            <div class="students-box">
+                <div style="font-weight: bold; margin-bottom: 5px;">Name(s) (Reg no)</div>
+                <div><strong>Havish</strong> (24BYB0057)</div>
+                <div><strong>Shanmukha Simha</strong> (24BDE0123)</div>
+                <div style="font-size: 10pt; color: #555; margin-top: 8px;">Date of Submission: 04 September 2026</div>
+            </div>
+
+            <div class="guidance-box" style="margin-bottom: 10px;">
+                <div>Under the Guidance of</div>
+                <div class="guide-name">Dr. PORKODI S</div>
+                <div style="font-size: 11pt; margin-top: 4px;">Assistant Professor Senior Grade – 1</div>
+                <div style="font-size: 11pt; margin-top: 2px;">School of Computer Science Engineering and Information Systems</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2 & 3: TEMPLATE SECTIONS (HUMANIZED STUDENT FORMAT) -->
+    <div class="document-page page-break">
+        
+        <!-- ABSTRACT -->
+        <div class="section-heading">ABSTRACT: 150 – 200 words</div>
+        <p class="content-p">
+            In this Operating Systems lab mini project, we developed a Smart Hospital Resource Management System to apply core OS theoretical concepts to a practical real-world scenario. In emergency hospital wards, specialized medical units such as ICU beds, mechanical ventilators, MRI scanners, and surgery rooms are limited in number. When multiple patients arrive simultaneously with different urgency levels, managing patient queues and equipment allocation manually leads to long waiting times, equipment booking conflicts, and potential surgical deadlocks. Rather than implementing simple standalone textbook lab programs, our project models hospital emergency operations by integrating five core Operating System concepts into a single working web simulation framework. The system implements Preemptive Priority CPU Scheduling with aging for patient triage, Process Control Blocks (PCB) tracking 5-state process transitions, Mutex Locks and Semaphores to prevent race conditions on shared medical units, Banker's Safety Algorithm and Resource Allocation Graphs (RAG) to prevent surgical deadlocks, and Main Memory Partitioning with LRU/FIFO Virtual Page Replacement for diagnostic files. The simulator provides a live visual dashboard where scheduling performance and safety states can be evaluated interactively.
+        </p>
+
+        <!-- KEYWORDS -->
+        <div class="section-heading">Keywords: 5 – 6 keywords</div>
+        <p class="content-p">
+            CPU Scheduling, Process Control Block (PCB), Mutex Synchronization, Banker's Algorithm, Resource Allocation Graph (RAG), Virtual Memory Paging.
+        </p>
+
+        <!-- INTRODUCTION -->
+        <div class="section-heading">INTRODUCTION:</div>
+        <p class="content-p">
+            Operating System principles form the foundation for managing shared hardware resources efficiently among competing tasks. In our lab curriculum, topics such as process state management, CPU scheduling algorithms, mutual exclusion locks, deadlock avoidance, and memory management are typically studied through isolated CLI programs. For our mini project under the guidance of Dr. Porkodi S., we aimed to demonstrate how these individual OS concepts can be combined to solve a real-world resource allocation problem.
+        </p>
+        <p class="content-p">
+            We selected hospital emergency room operations as our application domain. A modern hospital emergency ward operates under conditions identical to a multi-programmed operating system: doctor consultation time represents CPU core execution, patient registration represents process creation, medical equipment represents shared critical sections, and patient medical files represent memory allocations. Building this system helped us understand the practical behavior of scheduling algorithms and concurrency controls in a clear, visual manner.
+        </p>
+
+        <!-- PROBLEM STATEMENT -->
+        <div class="section-heading">PROBLEM STATEMENT:</div>
+        <p class="content-p">
+            In hospital emergency wards, uncoordinated patient processing and unmanaged equipment requests lead to critical operational bottlenecks:
+        </p>
+        <ul class="content-list">
+            <li class="content-item">Emergency trauma cases waiting behind routine checkup cases due to lack of preemptive priority queueing.</li>
+            <li class="content-item">Lower-priority patients suffering from indefinite queue starvation during high emergency influxes.</li>
+            <li class="content-item">Race conditions occurring when multiple medical teams attempt to book the same single ICU bed or MRI scanner simultaneously.</li>
+            <li class="content-item">Circular wait deadlocks occurring during complex operations requiring multiple interdependent medical machines.</li>
+            <li class="content-item">Inefficient handling and page fault delays when accessing large patient digital diagnostic imaging files in memory.</li>
+        </ul>
+
+        <!-- OBJECTIVES -->
+        <div class="section-heading">OBJECTIVES:</div>
+        <ul class="content-list">
+            <li class="content-item">To model patient admissions as OS Processes containing a complete Process Control Block (PCB) with 5-state lifecycle transitions.</li>
+            <li class="content-item">To implement Preemptive Priority Scheduling for emergency triage along with an Aging algorithm to prevent starvation of low-priority routine cases.</li>
+            <li class="content-item">To protect shared physical equipment (ICU, Ventilator, MRI, Surgery Room) using Mutex Locks and Semaphores to guarantee mutual exclusion.</li>
+            <li class="content-item">To apply Banker's Safety Algorithm and canvas-based Resource Allocation Graphs (RAG) with cycle detection to avoid surgical deadlocks.</li>
+            <li class="content-item">To manage main RAM partitioning (First-Fit, Best-Fit, Worst-Fit) and simulate Virtual Memory Paging using LRU and FIFO page replacement.</li>
+        </ul>
+
+        <!-- SCOPE OF THE PROJECT -->
+        <div class="section-heading">SCOPE OF THE PROJECT:</div>
+        <p class="content-p">
+            The scope of this mini project includes the design and implementation of a web-based simulation environment that models hospital triage and equipment management. The system allows users to dynamically add patient processes with varying priorities (P1 Emergency Trauma to P4 Routine Checkup), CPU burst times, RAM requirements, and equipment claims. Users can switch between different CPU scheduling algorithms (Preemptive Priority, Round Robin Q=2s, SJF, FCFS) live, observe preemption events, run Banker's safety state evaluations, monitor Mutex lock waiting queues, test page replacement hit/fault ratios, and inspect comparative performance metrics (Average Wait Time, Turnaround Time, CPU Throughput).
+        </p>
+
+        <!-- PROPOSED SYSTEM -->
+        <div class="section-heading">PROPOSED SYSTEM:</div>
+        <p class="content-p">
+            The proposed system integrates five core Operating System concepts into a unified execution engine:
+        </p>
+        <ul class="content-list">
+            <li class="content-item"><strong>1. CPU & Priority Scheduling:</strong> The triage doctor CPU core schedules patients based on clinical priority (P1 to P4). When a P1 Emergency Trauma case enters the queue, any lower-priority process currently executing is preempted and returned to the READY state. Aging boosts effective priority for long-waiting P4 cases.</li>
+            <li class="content-item"><strong>2. Process Control (PCB):</strong> Each patient case is stored as a PCB object maintaining PID, Name, Priority, Burst Time, Memory Required, Resource Claim, State (NEW, READY, RUNNING, WAITING, TERMINATED), and accounting timestamps.</li>
+            <li class="content-item"><strong>3. Thread Synchronization:</strong> Shared units (ICU Bed, Ventilator, MRI, Surgery Room) are protected by Mutex locks. Requesting an occupied resource moves the patient process to a WAITING queue, avoiding race conditions.</li>
+            <li class="content-item"><strong>4. Deadlock Management:</strong> Banker's Algorithm evaluates <code>Available</code>, <code>Max</code>, <code>Allocation</code>, and <code>Need</code> matrices before granting claims to guarantee a Safe Sequence. An interactive RAG graph visualizes process/resource nodes and detects cycle deadlocks.</li>
+            <li class="content-item"><strong>5. Memory & Paging:</strong> 1024 KB RAM is managed using First-Fit, Best-Fit, and Worst-Fit dynamic partitioning. Virtual Paging models 4 physical frames tracking Page Hits and Faults under LRU and FIFO replacement policies.</li>
+        </ul>
+
+        <!-- SYSTEM ARCHITECTURE -->
+        <div class="section-heading">SYSTEM ARCHITECTURE:</div>
+        <p class="content-p">
+            The application follows a modular, client-side software architecture consisting of a presentation frontend, five specialized OS simulation engine modules, and a central simulation loop ticker:
+        </p>
+        <ul class="content-list">
+            <li class="content-item"><strong>Frontend Layer (`index.html`, `styles.css`):</strong> Responsive single-page glassmorphism dashboard containing controls, 5 concept tab viewports, data tables, Gantt chart canvas, RAG canvas, and console logs.</li>
+            <li class="content-item"><strong>Process Manager (`process_manager.js`):</strong> Handles PCB creation, process registry, PID generation, and state transitions.</li>
+            <li class="content-item"><strong>CPU Scheduler Engine (`cpu_scheduler.js`):</strong> Controls Priority Preemptive, RR, SJF, and FCFS algorithms, aging logic, context switching, and Gantt timeline generation.</li>
+            <li class="content-item"><strong>Banker & RAG Module (`banker_rag.js`):</strong> Solves safety matrices, computes safe sequences, and draws RAG nodes and edges on canvas.</li>
+            <li class="content-item"><strong>Synchronization Engine (`synchronization.js`):</strong> Manages Mutex locks and critical section waiting queues.</li>
+            <li class="content-item"><strong>Memory & Paging Manager (`memory_manager.js`):</strong> Manages First/Best-Fit RAM partitioning and LRU/FIFO virtual page replacement.</li>
+            <li class="content-item"><strong>Central OS Engine & UI Controller (`os_engine.js`, `ui_controller.js`):</strong> Runs the clock ticker (0.8s/tick), handles DOM events, and renders UI state.</li>
+        </ul>
+
+        <!-- REFERENCES -->
+        <div class="section-heading">REFERENCES: (10 reference )</div>
+        <ol class="ref-list">
+            <li class="ref-item">A. Silberschatz, P. B. Galvin, and G. Gagne, <em>Operating System Concepts</em>, 10th ed. Hoboken, NJ, USA: Wiley, 2018.</li>
+            <li class="ref-item">W. Stallings, <em>Operating Systems: Internals and Design Principles</em>, 9th ed. Boston, MA, USA: Pearson, 2018.</li>
+            <li class="ref-item">A. S. Tanenbaum and H. Bos, <em>Modern Operating Systems</em>, 4th ed. Boston, MA, USA: Pearson, 2015.</li>
+            <li class="ref-item">E. W. Dijkstra, "Cooperating sequential processes," in <em>Programming Languages</em>, F. Genuys, Ed. New York, NY, USA: Academic Press, 1968, pp. 43–112.</li>
+            <li class="ref-item">E. G. Coffman, M. J. Elphick, and A. Shoshani, "System deadlocks," <em>ACM Computing Surveys</em>, vol. 3, no. 2, pp. 67–78, Jun. 1971.</li>
+            <li class="ref-item">R. M. Fujimoto, "Parallel and distributed simulation systems," <em>Proceedings of the 33rd conference on Winter simulation</em>, IEEE, 2001, pp. 147–157.</li>
+            <li class="ref-item">L. Kleinrock, <em>Queueing Systems, Volume 1: Theory</em>. New York, NY, USA: Wiley-Interscience, 1975.</li>
+            <li class="ref-item">H. M. Deitel, P. J. Deitel, and D. R. Choffnes, <em>Operating Systems</em>, 3rd ed. Upper Saddle River, NJ, USA: Pearson/Prentice Hall, 2004.</li>
+            <li class="ref-item">M. L. Pinedo, <em>Scheduling: Theory, Algorithms, and Systems</em>, 5th ed. New York, NY, USA: Springer, 2016.</li>
+            <li class="ref-item">IEEE Computer Society, "IEEE Standard for Information Technology—Portable Operating System Interface (POSIX) Base Specifications," <em>IEEE Std 1003.1-2017</em>, 2018.</li>
+        </ol>
+    </div>
+
+</body>
+</html>
